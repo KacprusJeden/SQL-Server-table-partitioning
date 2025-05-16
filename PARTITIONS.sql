@@ -14,6 +14,7 @@
 -- AdventureWorks2022
 
 -- Author script: Kacper Prusinski
+-- Script name: PARTITIONS.sql
 -------------------------------------------------------------------------
 
 USE AdventureWorks2022
@@ -178,7 +179,7 @@ ALTER DATABASE AdventureWorks2022 ADD FILEGROUP FG_2027;
 ALTER DATABASE AdventureWorks2022 ADD FILE (
 	NAME = P_2027,
 	FILENAME = 'D:\sql_server_2022\MSSQL16.MSSQLSERVER\MSSQL\DATA\P_2027.ndf' -- your fullpath
-) to FILEGROUP FG_2027;
+) TO FILEGROUP FG_2027;
 
 ALTER PARTITION SCHEME SchemePartitionByYear
 NEXT USED FG_2027;

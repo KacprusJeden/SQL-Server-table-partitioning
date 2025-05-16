@@ -122,7 +122,7 @@ INSERT INTO Sales.Orders_Partitioned VALUES
 	(18, '2027-08-23', 200);
 
 
--- FG_2028
+-- 2028
 ALTER PARTITION SCHEME SchemePartitionByYear
 NEXT USED [PRIMARY];
 
