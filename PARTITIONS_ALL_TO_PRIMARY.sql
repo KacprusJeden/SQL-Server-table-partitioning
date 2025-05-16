@@ -14,6 +14,7 @@
 -- AdventureWorks2022
 
 -- Author script: Kacper Prusinski
+-- Script name: PARTITIONS_ALL_TO_PRIMARY.sql
 -------------------------------------------------------------------------
 
 USE AdventureWorks2022
