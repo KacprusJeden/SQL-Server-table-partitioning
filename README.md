@@ -18,3 +18,18 @@ In the script You will find details about
 - add data files and filegroups
 - create, truncate and remove any partition
 - import data to partition and export data from partition.
+
+
+## PARTITIONS_ALL_TO_PRIMARY.sql   
+This scripts shows how to correct create partitioned table   
+1. Create partition function with values by witch You can split table to smaller in one filegroup - PRIMARY
+2. Create partition scheme based on partition function.
+3. Create a partition table based on partition scheme and column by witch you can split table to smaller partitions.   
+   
+   
+In the script You will find details about   
+- create partition function and schema
+- create partition table
+- what is range left and right
+- create, truncate and remove any partition and working on one filegroup - PRIMARY
+- import data to partition and export data from partition.   
