@@ -161,7 +161,7 @@ TRUNCATE TABLE Sales.Orders_Partitioned
 WITH (PARTITIONS (1)); -- partition number from previous query
 
 
--- 9) DELETE PARTITION FOR EXAMPLE FG_2026
+-- 9) DELETE PARTITION FOR EXAMPLE 2026
 
 -- a) get partition number for FG_2026
 SELECT TOP 1 $Partition.PartitionByYear(Orderdate) as PartitionNumber 
@@ -241,11 +241,11 @@ INSERT INTO Sales.Table2022 VALUES
 	(2, '2022-05-11', 200),
 	(3, '2022-11-03', 300);
 
--- c) add constraint "check" Table2022, because data must be consistent with FG_2022 partition range.
+-- c) add constraint "check" Table2022, because data must be consistent with 2022 partition range.
 ALTER TABLE Sales.Table2022 ADD CONSTRAINT chk_orderdate_Table2022
 	CHECK (OrderDate IS NOT NULL AND OrderDate >= '2022-01-01' AND OrderDate <= '2022-12-31');
 
--- d) switch data from "Table2022" to partition 1 (FG_2022) of "Orders_Partitioned" table
+-- d) switch data from "Table2022" to partition 1 (2022) of "Orders_Partitioned" table
 ALTER TABLE Sales.Table2022 SWITCH TO Sales.Orders_Partitioned PARTITION 1;
 
 SELECT * FROM Sales.Table2022; -- after switch this table is empty
@@ -288,12 +288,12 @@ LEFT JOIN sys.partition_range_values prv
     AND prv.boundary_id + 1 = p.partition_number
 WHERE t.object_id  = OBJECT_ID('Sales.Orders_Partitioned') AND YEAR(try_convert(date, prv.value)) = 2025
 ORDER BY boundary_value;
--- partition FG_2025 (in my example, partition number = 4) is empty (rows = 3)
+-- partition with Year 2025 (in my example, partition number = 4) is empty (rows = 3)
 
--- b) switch data from partition [FG_2025] to Table2025
+-- b) switch data from partition 2025 to Table2025
 ALTER TABLE Sales.Orders_Partitioned switch partition 4 to Sales.Table2025;
 
-SELECT * FROM Sales.Orders_Partitioned WHERE Orderdate like '2025%'; -- partition [FG_2025] is empty
+SELECT * FROM Sales.Orders_Partitioned WHERE Orderdate like '2025%'; -- partition with YEAR(OrderDate) = 2025 is empty
 SELECT * FROM Sales.Table2025;
 
 
