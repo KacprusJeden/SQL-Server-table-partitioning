@@ -32,7 +32,7 @@ SELECT tp.object_id, tp.table_name, tp.schema_name,
 		WHEN tp.function_id IS NOT NULL AND OBJECT_ID IS NULL AND tp.data_space_id IS NULL THEN 'EXISTS ONLY FUNCTION'
 	END AS is_partitioned,
 	pf.name function_name, ps.name scheme_name, tp.part_column_name, tp.type, tp.precision, tp.scale,
-	tp.partition_number, prv.boundary_id, COALESCE(prv.value, tp.value1) VALUE, tp.rows, ps.data_space_id, pf.function_id
+	tp.partition_number, prv.boundary_id, COALESCE(prv.value, tp.value1) value, tp.rows, ps.data_space_id, pf.function_id
 FROM sys.partition_functions pf
 LEFT JOIN sys.partition_schemes ps ON pf.function_id = ps.function_id
 LEFT JOIN sys.partition_range_values prv on prv.function_id = ps.function_id
@@ -60,7 +60,9 @@ FULL JOIN (
 ) tp ON pf.function_id = tp.function_id AND prv.boundary_id = tp.partition_number;
 
 
--- PATTERNS FUNCTION
+
+
+-- PATTERN FUNCTIONS
 CREATE OR ALTER FUNCTION dbo.partition_function_name_pattern (
 	@table_schema varchar(60),
 	@table_name varchar(120)
@@ -91,6 +93,9 @@ BEGIN
 	RETURN @part_scheme; -- output format: "[schema]_[table]_Scheme_[column]"
 END;
 
+
+
+
 -- PREPARING NEW PARTITIONED TABLES
 CREATE OR ALTER PROCEDURE dbo.print_or_execute
 	@print_execute varchar(2),
@@ -118,6 +123,7 @@ BEGIN CATCH
 	SET @err_msg = ERROR_PROCEDURE() + '; LINE: ' + CAST(ERROR_LINE() AS varchar(4)) + '; MESSAGE: ' + ERROR_MESSAGE();
 	RAISERROR(@err_msg, 16, 1);
 END CATCH;
+
 
 CREATE OR ALTER PROCEDURE dbo.create_partition_function
     @table_schema varchar(60),
@@ -294,6 +300,8 @@ BEGIN
 END;
 
 
+
+
 -- PREPARING TABLE
 CREATE OR ALTER PROCEDURE dbo.add_partition
 	@partition_function varchar(300),
@@ -420,6 +428,8 @@ BEGIN CATCH
 END CATCH;
 
 
+
+
 -- CLEANING
 CREATE OR ALTER PROCEDURE dbo.drop_table
 	@table_schema varchar(60),
@@ -467,6 +477,8 @@ BEGIN CATCH
 END CATCH;
 
 
+
+
 -- TESTING
 
 -- date type of partition column
@@ -502,7 +514,7 @@ SELECT * FROM v_partitioned_tables WHERE object_id = OBJECT_ID('Sales.Order_Part
 
 -- add partition for value
 EXEC dbo.add_partition @partition_function = 'Sales_Order_Partitioned_PF', 
-	@partition_scheme = 'Sales_Order_Partitioned_Scheme_OrderDate', @value = '''2022-12-31''', @print_execute = 'P'; -- default PE
+	@partition_scheme = 'Sales_Order_Partitioned_Scheme_OrderDate', @value = '''2022-12-31''', @print_execute = 'PE'; -- default PE
 
 INSERT INTO Sales.Order_Partitioned VALUES
 	(13, '2022-05-15', 300), 
@@ -533,7 +545,7 @@ INSERT INTO Sales.Order_Partitioned VALUES
 EXEC dbo.prepare_table @table_schema = 'Sales', @table_name = 'Order_Partitioned', @partition_column = 'OrderDate', 
 	@value = '2025-12-31', @delete_condition = NULL, @to_remove = 'Y', @print_execute = NULL;
 
--- truncate partition with OrderDate < '2025-12-31'
+-- truncate partition with OrderDate < '2026-12-31'
 EXEC dbo.prepare_table @table_schema = 'Sales', @table_name = 'Order_Partitioned', @partition_column = 'OrderDate', 
 	@value = '2026-12-31', @delete_condition = NULL, @to_remove = 'N', @print_execute = NULL;
 
@@ -626,9 +638,9 @@ EXEC dbo.prepare_table @table_schema = 'Sales', @table_name = 'Order_Partitioned
 SELECT sod.*, $partition.Sales_Order_Partitioned_PF(OrderYear) number FROM Sales.Order_Partitioned sod;
 SELECT * FROM v_partitioned_tables WHERE object_id = OBJECT_ID('Sales.Order_Partitioned');
 
--- delete all orders before 2024-12-31 with order_id > 10
+-- delete all orders from 2024-11
 EXEC dbo.prepare_table @table_schema = 'Sales', @table_name ='Order_Partitioned',
-	@partition_column = NULL, @value = NULL, @delete_condition = 'OrderYear <= 2024 and OrderID > 10', 
+	@partition_column = 'OrderYear', @value = '2024', @delete_condition = 'MONTH(OrderDate) = 11', 
 	@to_remove = NULL, @print_execute = 'PE';
 
 -- truncate table Sales.Order_Partitioned
