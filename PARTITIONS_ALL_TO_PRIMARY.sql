@@ -263,7 +263,7 @@ CREATE TABLE Sales.Table2025(
 	Sales int
 ) ON [PRIMARY]; -- relation between [PRIMARY] partition of SOURCE table (Orders_Partitioned) and TARGET table (Table2025)
 
--- -- get info about 'Sales.Orders_Partitioned' table partition for year 2025
+-- get info about 'Sales.Orders_Partitioned' table partition for year 2025
 SELECT 
     t.name AS table_name,
 	t.object_id,
