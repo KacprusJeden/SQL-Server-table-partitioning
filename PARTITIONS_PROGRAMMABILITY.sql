@@ -242,7 +242,7 @@ CREATE OR ALTER PROCEDURE dbo.prepare_new_partition_table
 AS
 BEGIN TRY
 	DECLARE 
-		@err_msg nvarchar(MAX)
+		@err_msg nvarchar(MAX);
 
 	SET @table_schema = COALESCE(@table_schema, 'dbo');
 		
@@ -260,9 +260,6 @@ BEGIN TRY
 
 END TRY
 BEGIN CATCH
-	CLOSE value_cur;
-	DEALLOCATE value_cur;
-
     SET @err_msg = ERROR_PROCEDURE() + '; LINE: ' + CAST(ERROR_LINE() AS varchar(4)) + '; MESSAGE: ' + ERROR_MESSAGE();
 	RAISERROR(@err_msg, 16, 1);
 END CATCH;
