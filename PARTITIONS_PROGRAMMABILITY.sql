@@ -127,11 +127,11 @@ END CATCH;
 
 CREATE OR ALTER PROCEDURE dbo.create_partition_function
     @table_schema varchar(60),
-	@table_name varchar(120),
+    @table_name varchar(120),
     @ranges nvarchar(MAX), -- values for partitions, expected delimiter: ',' values without added quotation marks, 'A,B,C...'
     @type_values nvarchar(20), -- int, date, varchar(...), nvarchar etc.
     @range_kind nvarchar(1), -- L - left, R - right,
-	@print_execute varchar(2) -- P - only print, E - execute, PE or NULL- print + execute
+    @print_execute varchar(2) -- P - only print, E - execute, PE or NULL- print + execute
 AS
 BEGIN TRY
     SET NOCOUNT ON;
@@ -155,8 +155,8 @@ BEGIN TRY
 
     SET @part_func_tab = dbo.partition_function_name_pattern(@table_schema, @table_name);
 
-	IF @ranges IS NULL
-		SET @ranges = '';
+    IF @ranges IS NULL
+	SET @ranges = '';
     ELSE IF LOWER(@type_values) LIKE '%char%' OR LOWER(@type_values) LIKE '%text%' OR LOWER(@type_values) = 'date'
     BEGIN
         SELECT @ranges = STRING_AGG('''' + TRIM(value) + '''', ', ') WITHIN GROUP (ORDER BY TRIM(value))
@@ -174,8 +174,8 @@ BEGIN TRY
 
 	SET @range_kind = CASE WHEN @range_kind = 'L' THEN 'LEFT' ELSE 'RIGHT' END;
 
-    SET @sql = 'CREATE PARTITION FUNCTION ' + QUOTENAME(@part_func_tab) + ' (' + @type_values + ') ' +
-       'AS RANGE ' + CASE WHEN @range_kind = 'L' THEN 'LEFT' ELSE 'RIGHT' END + ' FOR VALUES (' + @ranges + ')';
+        SET @sql = 'CREATE PARTITION FUNCTION ' + QUOTENAME(@part_func_tab) + ' (' + @type_values + ') ' +
+        'AS RANGE ' + CASE WHEN @range_kind = 'L' THEN 'LEFT' ELSE 'RIGHT' END + ' FOR VALUES (' + @ranges + ')';
  
 	IF COALESCE(@print_execute, 'PE') NOT IN ('P', 'E', 'PE')
 	BEGIN
@@ -232,13 +232,13 @@ END CATCH;
 
 
 CREATE OR ALTER PROCEDURE dbo.prepare_new_partition_table
-	@table_schema varchar(60),
-	@table_name varchar(120),
-	@partition_column varchar(50), -- partition column name
+    @table_schema varchar(60),
+    @table_name varchar(120),
+    @partition_column varchar(50), -- partition column name
     @ranges nvarchar(MAX), -- values for partitions, expected delimiter: ',' values without added quotation marks, 'A,B,C...'
     @type_values varchar(20), -- int, date, varchar(...), nvarchar etc.
     @range_kind varchar(1), -- L - left, R - right
-	@print_execute varchar(2) -- P - only print, E - execute, PE or NULL- print + execute
+    @print_execute varchar(2) -- P - only print, E - execute, PE or NULL- print + execute
 AS
 BEGIN TRY
 	DECLARE 
@@ -325,7 +325,7 @@ END CATCH;
 
 CREATE OR ALTER PROCEDURE dbo.prepare_table
 	@table_schema varchar(60),
-	@table_name	nvarchar(120),
+	@table_name nvarchar(120),
 	@partition_column nvarchar(50),
 	@value nvarchar(100),
 	@delete_condition nvarchar(MAX),
