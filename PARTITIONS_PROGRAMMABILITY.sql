@@ -444,7 +444,7 @@ BEGIN TRY
 		@err_msg nvarchar(2000),
 		@sql nvarchar(MAX);
 
-	SET @table = TRIM(@table_schema) + '.' + TRIM(@table_name);
+	SET @table = TRIM(COALESCE(@table_schema, 'dbo')) + '.' + TRIM(COALESCE(@table_name, 'Table'));
 
 	IF OBJECT_ID(@table) IS NULL
 	BEGIN
